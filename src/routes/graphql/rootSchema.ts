@@ -9,6 +9,7 @@ import { MemberType, memberTypeIdEnum } from './member-types/schemas.js';
 import { PrismaClient } from '@prisma/client';
 import { ChangePostInput, CreatePostInput, Post } from './posts/schemas.js';
 import { UUIDType } from './types/uuid.js';
+import { ChangeUserInput, CreateUserInput, User } from './users/schemas.js';
 
 export type GraphQLContext = {
   prisma: PrismaClient;
@@ -39,6 +40,27 @@ export const schema = new GraphQLSchema({
           return memberType;
         },
       },
+      users: {
+        type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
+        resolve: (_, __, context: GraphQLContext) => context.prisma.user.findMany(),
+      },
+      user: {
+        type: new GraphQLNonNull(User),
+        args: {
+          id: { type: new GraphQLNonNull(UUIDType) },
+        },
+        resolve: async (_, { id }, context: GraphQLContext) => {
+          const user = await context.prisma.post.findUnique({
+            where: {
+              id: id as string,
+            },
+          });
+          if (user === null) {
+            throw new GraphQLError('User is not found');
+          }
+          return user;
+        },
+      },
       posts: {
         type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Post))),
         resolve: (_, __, context: GraphQLContext) => context.prisma.post.findMany(),
@@ -65,6 +87,42 @@ export const schema = new GraphQLSchema({
   mutation: new GraphQLObjectType({
     name: 'Mutation',
     fields: {
+      createUser: {
+        type: User,
+        args: {
+          dto: { type: new GraphQLNonNull(CreateUserInput) },
+        },
+        resolve: (_, { dto }: { dto }, context: GraphQLContext) => {
+          return context.prisma.user.create({
+            data: dto,
+          });
+        },
+      },
+      changeUser: {
+        type: User,
+        args: {
+          dto: { type: new GraphQLNonNull(ChangeUserInput) },
+        },
+        resolve: (_, { dto }: { dto }, context: GraphQLContext) => {
+          return context.prisma.user.create({
+            data: dto,
+          });
+        },
+      },
+      deleteUser: {
+        type: User,
+        args: {
+          id: { type: new GraphQLNonNull(UUIDType) }
+        },
+        resolve: async (_, { id }: { id }, context: GraphQLContext) => {
+          const user = await context.prisma.user.delete({
+            where: {
+              id: id
+            }
+          });
+          return user.name
+        },
+      },
       createPost: {
         type: Post,
         args: {
