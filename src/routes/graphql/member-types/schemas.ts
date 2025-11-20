@@ -2,6 +2,7 @@ import {
   GraphQLEnumType,
   GraphQLFloat,
   GraphQLInt,
+  GraphQLNonNull,
   GraphQLObjectType,
 } from 'graphql';
 
@@ -25,15 +26,15 @@ export const MemberType = new GraphQLObjectType({
   description: 'A member type options (BASIC | BUSINESS)',
   fields: () => ({
     id: {
-      type: memberTypeIdEnum,
+      type: new GraphQLNonNull(memberTypeIdEnum),
       description: 'The id of the member type',
     },
     discount: {
-      type: GraphQLFloat,
+      type: new GraphQLNonNull(GraphQLFloat),
       description: 'The discount of member type',
     },
     postsLimitPerMonth: {
-      type: GraphQLInt,
+      type: new GraphQLNonNull(GraphQLInt),
       description: 'The post limit per month of member type',
     },
   }),
