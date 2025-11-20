@@ -10,6 +10,7 @@ import { PrismaClient } from '@prisma/client';
 import { ChangePostInput, CreatePostInput, Post } from './posts/schemas.js';
 import { UUIDType } from './types/uuid.js';
 import { ChangeUserInput, CreateUserInput, User } from './users/schemas.js';
+import { Profile } from './profile/schemas.js';
 
 export type GraphQLContext = {
   prisma: PrismaClient;
@@ -21,7 +22,8 @@ export const schema = new GraphQLSchema({
     fields: () => ({
       memberTypes: {
         type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(MemberType))),
-        resolve: (_, __, context: GraphQLContext) => context.prisma.memberType.findMany(),
+        resolve: async (_, __, context: GraphQLContext) =>
+          context.prisma.memberType.findMany(),
       },
       memberType: {
         type: new GraphQLNonNull(MemberType),
@@ -82,6 +84,27 @@ export const schema = new GraphQLSchema({
           return post;
         },
       },
+      profiles: {
+        type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Profile))),
+        resolve: (_, __, context: GraphQLContext) => context.prisma.profile.findMany(),
+      },
+      profile: {
+        type: new GraphQLNonNull(Profile),
+        args: {
+          id: { type: new GraphQLNonNull(UUIDType) },
+        },
+        resolve: async (_, { id }, context: GraphQLContext) => {
+          const profile = await context.prisma.profile.findUnique({
+            where: {
+              id: id as string,
+            },
+          });
+          if (profile === null) {
+            throw new GraphQLError('User is not found');
+          }
+          return profile.id;
+        },
+      },
     }),
   }),
   mutation: new GraphQLObjectType({
@@ -112,15 +135,15 @@ export const schema = new GraphQLSchema({
       deleteUser: {
         type: User,
         args: {
-          id: { type: new GraphQLNonNull(UUIDType) }
+          id: { type: new GraphQLNonNull(UUIDType) },
         },
         resolve: async (_, { id }: { id }, context: GraphQLContext) => {
           const user = await context.prisma.user.delete({
             where: {
-              id: id
-            }
+              id: id,
+            },
           });
-          return user.name
+          return user.name;
         },
       },
       createPost: {
@@ -138,12 +161,12 @@ export const schema = new GraphQLSchema({
         type: Post,
         args: {
           dto: { type: new GraphQLNonNull(ChangePostInput) },
-          id: { type: new GraphQLNonNull(UUIDType) }
+          id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: (_, { id, dto }: { id, dto }, context: GraphQLContext) => {
+        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) => {
           return context.prisma.post.update({
             where: {
-              id: id
+              id: id,
             },
             data: dto,
           });
@@ -152,15 +175,15 @@ export const schema = new GraphQLSchema({
       deletePost: {
         type: Post,
         args: {
-          id: { type: new GraphQLNonNull(UUIDType) }
+          id: { type: new GraphQLNonNull(UUIDType) },
         },
         resolve: async (_, { id }: { id }, context: GraphQLContext) => {
           const post = await context.prisma.post.delete({
             where: {
-              id: id
-            }
+              id: id,
+            },
           });
-          return post.title
+          return post.title;
         },
       },
     },

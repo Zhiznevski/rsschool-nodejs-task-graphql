@@ -6,7 +6,7 @@ import { schema } from './rootSchema.js';
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma, httpErrors } = fastify;
   fastify.route({
-    url: '/',
+    url: '/graphql',
     method: 'POST',
     schema: {
       ...createGqlResponseSchema,
