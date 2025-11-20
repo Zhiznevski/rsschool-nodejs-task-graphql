@@ -22,11 +22,10 @@ export const schema = new GraphQLSchema({
     fields: () => ({
       memberTypes: {
         type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(MemberType))),
-        resolve: async (_, __, context: GraphQLContext) =>
-          context.prisma.memberType.findMany(),
+        resolve: (_, __, context: GraphQLContext) => context.prisma.memberType.findMany(),
       },
       memberType: {
-        type: new GraphQLNonNull(MemberType),
+        type: MemberType,
         args: {
           id: { type: new GraphQLNonNull(memberTypeIdEnum) },
         },
@@ -36,7 +35,7 @@ export const schema = new GraphQLSchema({
               id: id as string,
             },
           });
-          if (memberType === null) {
+          if (!memberType) {
             throw new GraphQLError('Member type is not found');
           }
           return memberType;
@@ -47,17 +46,17 @@ export const schema = new GraphQLSchema({
         resolve: (_, __, context: GraphQLContext) => context.prisma.user.findMany(),
       },
       user: {
-        type: new GraphQLNonNull(User),
+        type: User,
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
         resolve: async (_, { id }, context: GraphQLContext) => {
-          const user = await context.prisma.post.findUnique({
+          const user = await context.prisma.user.findUnique({
             where: {
               id: id as string,
             },
           });
-          if (user === null) {
+          if (!user) {
             throw new GraphQLError('User is not found');
           }
           return user;
@@ -68,7 +67,7 @@ export const schema = new GraphQLSchema({
         resolve: (_, __, context: GraphQLContext) => context.prisma.post.findMany(),
       },
       post: {
-        type: new GraphQLNonNull(Post),
+        type: Post,
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
@@ -78,7 +77,7 @@ export const schema = new GraphQLSchema({
               id: id as string,
             },
           });
-          if (post === null) {
+          if (!post) {
             throw new GraphQLError('Post type is not found');
           }
           return post;
@@ -89,7 +88,7 @@ export const schema = new GraphQLSchema({
         resolve: (_, __, context: GraphQLContext) => context.prisma.profile.findMany(),
       },
       profile: {
-        type: new GraphQLNonNull(Profile),
+        type: Profile,
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
@@ -99,10 +98,10 @@ export const schema = new GraphQLSchema({
               id: id as string,
             },
           });
-          if (profile === null) {
+          if (!profile) {
             throw new GraphQLError('User is not found');
           }
-          return profile.id;
+          return profile
         },
       },
     }),
