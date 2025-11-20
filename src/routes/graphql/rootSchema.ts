@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import { MemberType, memberTypeIdEnum } from './member-types/schemas.js';
 import { PrismaClient } from '@prisma/client';
-import { CreatePostInput, Post } from './posts/schemas.js';
+import { ChangePostInput, CreatePostInput, Post } from './posts/schemas.js';
 import { UUIDType } from './types/uuid.js';
 
 export type GraphQLContext = {
@@ -74,6 +74,35 @@ export const schema = new GraphQLSchema({
           return context.prisma.post.create({
             data: dto,
           });
+        },
+      },
+      changePost: {
+        type: Post,
+        args: {
+          dto: { type: new GraphQLNonNull(ChangePostInput) },
+          id: { type: new GraphQLNonNull(UUIDType) }
+        },
+        resolve: (_, { id, dto }: { id, dto }, context: GraphQLContext) => {
+          return context.prisma.post.update({
+            where: {
+              id: id
+            },
+            data: dto,
+          });
+        },
+      },
+      deletePost: {
+        type: Post,
+        args: {
+          id: { type: new GraphQLNonNull(UUIDType) }
+        },
+        resolve: async (_, { id }: { id }, context: GraphQLContext) => {
+          const post = await context.prisma.post.delete({
+            where: {
+              id: id
+            }
+          });
+          return post.title
         },
       },
     },
