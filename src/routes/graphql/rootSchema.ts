@@ -10,7 +10,7 @@ import { PrismaClient } from '@prisma/client';
 import { ChangePostInput, CreatePostInput, Post } from './posts/schemas.js';
 import { UUIDType } from './types/uuid.js';
 import { ChangeUserInput, CreateUserInput, User } from './users/schemas.js';
-import { Profile } from './profile/schemas.js';
+import { ChangeProfileInput, CreateProfileInput, Profile } from './profile/schemas.js';
 
 export type GraphQLContext = {
   prisma: PrismaClient;
@@ -36,7 +36,7 @@ export const schema = new GraphQLSchema({
             },
           });
           if (!memberType) {
-            throw new GraphQLError('Member type is not found');
+            return null;
           }
           return memberType;
         },
@@ -57,7 +57,7 @@ export const schema = new GraphQLSchema({
             },
           });
           if (!user) {
-            throw new GraphQLError('User is not found');
+            return null;
           }
           return user;
         },
@@ -78,7 +78,7 @@ export const schema = new GraphQLSchema({
             },
           });
           if (!post) {
-            throw new GraphQLError('Post type is not found');
+            return null;
           }
           return post;
         },
@@ -99,9 +99,9 @@ export const schema = new GraphQLSchema({
             },
           });
           if (!profile) {
-            throw new GraphQLError('User is not found');
+            return null;
           }
-          return profile
+          return profile;
         },
       },
     }),
@@ -114,22 +114,18 @@ export const schema = new GraphQLSchema({
         args: {
           dto: { type: new GraphQLNonNull(CreateUserInput) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) => {
-          return context.prisma.user.create({
-            data: dto,
-          });
-        },
+        resolve: (_, { dto }: { dto }, context: GraphQLContext) => context.prisma.user.create({
+          data: dto,
+        })
       },
       changeUser: {
         type: User,
         args: {
           dto: { type: new GraphQLNonNull(ChangeUserInput) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) => {
-          return context.prisma.user.create({
-            data: dto,
-          });
-        },
+        resolve: (_, { dto }: { dto }, context: GraphQLContext) => context.prisma.user.create({
+          data: dto,
+        })
       },
       deleteUser: {
         type: User,
@@ -150,11 +146,9 @@ export const schema = new GraphQLSchema({
         args: {
           dto: { type: new GraphQLNonNull(CreatePostInput) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) => {
-          return context.prisma.post.create({
-            data: dto,
-          });
-        },
+        resolve: (_, { dto }: { dto }, context: GraphQLContext) => context.prisma.post.create({
+          data: dto,
+        })
       },
       changePost: {
         type: Post,
@@ -162,14 +156,12 @@ export const schema = new GraphQLSchema({
           dto: { type: new GraphQLNonNull(ChangePostInput) },
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) => {
-          return context.prisma.post.update({
-            where: {
-              id: id,
-            },
-            data: dto,
-          });
-        },
+        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) => context.prisma.post.update({
+          where: {
+            id: id,
+          },
+          data: dto,
+        })
       },
       deletePost: {
         type: Post,
@@ -183,6 +175,42 @@ export const schema = new GraphQLSchema({
             },
           });
           return post.title;
+        },
+      },
+      createProfile: {
+        type: Profile,
+        args: {
+          dto: { type: new GraphQLNonNull(CreateProfileInput) },
+        },
+        resolve: (_, { dto }: { dto }, context: GraphQLContext) => context.prisma.profile.create({
+          data: dto,
+        })
+      },
+      changeProfile: {
+        type: Profile,
+        args: {
+          dto: { type: new GraphQLNonNull(ChangeProfileInput) },
+          id: { type: new GraphQLNonNull(UUIDType) },
+        },
+        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) => context.prisma.profile.update({
+          where: {
+            id: id,
+          },
+          data: dto,
+        })
+      },
+      deleteProfile: {
+        type: Profile,
+        args: {
+          id: { type: new GraphQLNonNull(UUIDType) },
+        },
+        resolve: async (_, { id }: { id }, context: GraphQLContext) => {
+          const profile = await context.prisma.profile.delete({
+            where: {
+              id: id,
+            },
+          });
+          return profile.id;
         },
       },
     },
