@@ -150,6 +150,40 @@ export const schema = new GraphQLSchema({
           return "User is deleted";
         },
       },
+      subscribeTo: {
+        type: new GraphQLNonNull(GraphQLString),
+        args: {
+          userId: { type: new GraphQLNonNull(UUIDType) },
+          authorId: { type: new GraphQLNonNull(UUIDType) },
+        },
+        resolve: async (_, { userId, authorId }: { userId, authorId }, context) => {
+          await context.prisma.subscribersOnAuthors.create({
+            data: {
+              subscriberId: userId,
+              authorId: authorId,
+            }
+          })
+          return "You successfully subscribed"
+        }
+      },
+      unsubscribeFrom: {
+        type: new GraphQLNonNull(GraphQLString),
+        args: {
+          userId: { type: new GraphQLNonNull(UUIDType) },
+          authorId: { type: new GraphQLNonNull(UUIDType) },
+        },
+        resolve: async (_, { userId, authorId }: { userId, authorId }, context) => {
+          await context.prisma.subscribersOnAuthors.delete({
+            where: {
+              subscriberId_authorId: {
+                authorId: authorId,
+                subscriberId: userId
+              }
+            }
+          })
+          return "You successfully unsubscribed"
+        }
+      },
       createPost: {
         type: Post,
         args: {
