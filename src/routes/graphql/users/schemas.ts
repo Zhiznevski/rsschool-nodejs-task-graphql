@@ -40,11 +40,12 @@ export const User = new GraphQLObjectType({
     posts: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Post))),
       resolve: async (parent, _, context: GraphQLContext) =>
-        context.prisma.post.findMany({
-          where: {
-            authorId: parent.id,
-          },
-        }),
+        // context.prisma.post.findMany({
+        //   where: {
+        //     authorId: parent.id,
+        //   },
+        // }),
+        context.postsLoader.load(parent.id)
     },
     userSubscribedTo: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),

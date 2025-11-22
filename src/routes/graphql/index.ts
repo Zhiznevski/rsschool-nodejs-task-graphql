@@ -9,6 +9,8 @@ import {
 } from 'graphql';
 import { schema } from './rootSchema.js';
 import depthLimit from 'graphql-depth-limit';
+import DataLoader from 'dataloader';
+import { PrismaClient } from '@prisma/client';
 
 const allValidationRules = [...specifiedRules, depthLimit(5)];
 
@@ -31,6 +33,22 @@ export function executeGraphQLRequest(args: GraphQLArgs) {
   return execute({ document, ...args });
 }
 
+function createContext(prisma: PrismaClient) {
+  return {
+    prisma,
+    postsLoader: new DataLoader(async (userIds) => {
+      const posts = await prisma.post.findMany({
+        where: {
+          authorId: {
+            in: userIds as string[],
+          }
+        }
+      })
+      return userIds.map(id => posts.filter(post => post.authorId === id));
+    }),
+  };
+}
+
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
   fastify.route({
@@ -48,7 +66,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       const res = await executeGraphQLRequest({
         schema: schema,
         source: query,
-        contextValue: { prisma },
+        contextValue: createContext(prisma),
         variableValues: variables,
       });
 

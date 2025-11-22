@@ -14,9 +14,11 @@ import { ChangePostInput, CreatePostInput, Post } from './posts/schemas.js';
 import { UUIDType } from './types/uuid.js';
 import { ChangeUserInput, CreateUserInput, User } from './users/schemas.js';
 import { ChangeProfileInput, CreateProfileInput, Profile } from './profile/schemas.js';
+import DataLoader from 'dataloader';
 
 export type GraphQLContext = {
   prisma: PrismaClient;
+  postsLoader: InstanceType<typeof DataLoader>,
 };
 
 export const schema = new GraphQLSchema({
