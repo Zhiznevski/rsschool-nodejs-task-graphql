@@ -128,7 +128,7 @@ export const schema = new GraphQLSchema({
           dto: { type: new GraphQLNonNull(ChangeUserInput) },
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: (_, { id, dto }: { id, dto }, context: GraphQLContext) =>
+        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) =>
           context.prisma.user.update({
             where: {
               id: id,
@@ -147,7 +147,7 @@ export const schema = new GraphQLSchema({
               id: id,
             },
           });
-          return "User is deleted";
+          return 'User is deleted';
         },
       },
       subscribeTo: {
@@ -156,15 +156,15 @@ export const schema = new GraphQLSchema({
           userId: { type: new GraphQLNonNull(UUIDType) },
           authorId: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: async (_, { userId, authorId }: { userId, authorId }, context) => {
+        resolve: async (_, { userId, authorId }: { userId; authorId }, context) => {
           await context.prisma.subscribersOnAuthors.create({
             data: {
               subscriberId: userId,
               authorId: authorId,
-            }
-          })
-          return "You successfully subscribed"
-        }
+            },
+          });
+          return 'You successfully subscribed';
+        },
       },
       unsubscribeFrom: {
         type: new GraphQLNonNull(GraphQLString),
@@ -172,17 +172,17 @@ export const schema = new GraphQLSchema({
           userId: { type: new GraphQLNonNull(UUIDType) },
           authorId: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: async (_, { userId, authorId }: { userId, authorId }, context) => {
+        resolve: async (_, { userId, authorId }: { userId; authorId }, context) => {
           await context.prisma.subscribersOnAuthors.delete({
             where: {
               subscriberId_authorId: {
                 authorId: authorId,
-                subscriberId: userId
-              }
-            }
-          })
-          return "You successfully unsubscribed"
-        }
+                subscriberId: userId,
+              },
+            },
+          });
+          return 'You successfully unsubscribed';
+        },
       },
       createPost: {
         type: Post,
@@ -219,7 +219,7 @@ export const schema = new GraphQLSchema({
               id: id,
             },
           });
-          return "Post is deleted";
+          return 'Post is deleted';
         },
       },
       createProfile: {
@@ -257,7 +257,7 @@ export const schema = new GraphQLSchema({
               id: id,
             },
           });
-          return "Profile is deleted"
+          return 'Profile is deleted';
         },
       },
     },
