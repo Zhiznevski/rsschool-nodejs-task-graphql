@@ -4,6 +4,9 @@ import {
   GraphQLList,
   GraphQLError,
   GraphQLNonNull,
+  GraphQLScalarType,
+  GraphQLBoolean,
+  GraphQLString,
 } from 'graphql';
 import { MemberType, memberTypeIdEnum } from './member-types/schemas.js';
 import { PrismaClient } from '@prisma/client';
@@ -130,17 +133,17 @@ export const schema = new GraphQLSchema({
           }),
       },
       deleteUser: {
-        type: User,
+        type: new GraphQLNonNull(GraphQLString),
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
         resolve: async (_, { id }: { id }, context: GraphQLContext) => {
-          const user = await context.prisma.user.delete({
+          await context.prisma.user.delete({
             where: {
               id: id,
             },
           });
-          return user.name;
+          return "User is deleted";
         },
       },
       createPost: {
@@ -168,17 +171,17 @@ export const schema = new GraphQLSchema({
           }),
       },
       deletePost: {
-        type: Post,
+        type: new GraphQLNonNull(GraphQLString),
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
         resolve: async (_, { id }: { id }, context: GraphQLContext) => {
-          const post = await context.prisma.post.delete({
+          await context.prisma.post.delete({
             where: {
               id: id,
             },
           });
-          return post.title;
+          return "Post is deleted";
         },
       },
       createProfile: {
@@ -206,17 +209,17 @@ export const schema = new GraphQLSchema({
           }),
       },
       deleteProfile: {
-        type: Profile,
+        type: new GraphQLNonNull(GraphQLString),
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
         resolve: async (_, { id }: { id }, context: GraphQLContext) => {
-          const profile = await context.prisma.profile.delete({
+          await context.prisma.profile.delete({
             where: {
               id: id,
             },
           });
-          return profile.id;
+          return "Profile is deleted"
         },
       },
     },
