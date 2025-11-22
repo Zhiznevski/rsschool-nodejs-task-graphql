@@ -8,6 +8,7 @@ import {
 import { UUIDType } from '../types/uuid.js';
 import { MemberType, memberTypeIdEnum } from '../member-types/schemas.js';
 import { MemberTypeId } from '../../member-types/schemas.js';
+import { GraphQLContext } from '../rootSchema.js';
 
 export const Profile = new GraphQLObjectType({
   name: 'Profile',
@@ -22,11 +23,9 @@ export const Profile = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLInt),
     },
     memberType: {
-      type: new GraphQLNonNull(MemberType),
-      resolve: (parent, _, context) =>
-        context.prisma.memberType.findUnique({
-          where: { id: parent.memberTypeId },
-        }),
+      type: MemberType,
+      resolve: (parent, _, context: GraphQLContext) =>
+        context.memberTypesLoader.load(parent.memberTypeId),
     },
   }),
 });

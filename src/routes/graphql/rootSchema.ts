@@ -16,9 +16,15 @@ import { ChangeUserInput, CreateUserInput, User } from './users/schemas.js';
 import { ChangeProfileInput, CreateProfileInput, Profile } from './profile/schemas.js';
 import DataLoader from 'dataloader';
 
+type DataLoaderType = InstanceType<typeof DataLoader>;
+
 export type GraphQLContext = {
   prisma: PrismaClient;
-  postsLoader: InstanceType<typeof DataLoader>,
+  postsLoader: DataLoaderType;
+  profileLoader: DataLoaderType;
+  userSubscriptions: DataLoaderType;
+  userSubscribers: DataLoaderType;
+  memberTypesLoader: DataLoaderType;
 };
 
 export const schema = new GraphQLSchema({
