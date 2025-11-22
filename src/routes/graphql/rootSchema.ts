@@ -114,18 +114,20 @@ export const schema = new GraphQLSchema({
         args: {
           dto: { type: new GraphQLNonNull(CreateUserInput) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) => context.prisma.user.create({
-          data: dto,
-        })
+        resolve: (_, { dto }: { dto }, context: GraphQLContext) =>
+          context.prisma.user.create({
+            data: dto,
+          }),
       },
       changeUser: {
         type: User,
         args: {
           dto: { type: new GraphQLNonNull(ChangeUserInput) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) => context.prisma.user.create({
-          data: dto,
-        })
+        resolve: (_, { dto }: { dto }, context: GraphQLContext) =>
+          context.prisma.user.create({
+            data: dto,
+          }),
       },
       deleteUser: {
         type: User,
@@ -146,9 +148,10 @@ export const schema = new GraphQLSchema({
         args: {
           dto: { type: new GraphQLNonNull(CreatePostInput) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) => context.prisma.post.create({
-          data: dto,
-        })
+        resolve: (_, { dto }: { dto }, context: GraphQLContext) =>
+          context.prisma.post.create({
+            data: dto,
+          }),
       },
       changePost: {
         type: Post,
@@ -156,12 +159,13 @@ export const schema = new GraphQLSchema({
           dto: { type: new GraphQLNonNull(ChangePostInput) },
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) => context.prisma.post.update({
-          where: {
-            id: id,
-          },
-          data: dto,
-        })
+        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) =>
+          context.prisma.post.update({
+            where: {
+              id: id,
+            },
+            data: dto,
+          }),
       },
       deletePost: {
         type: Post,
@@ -182,9 +186,10 @@ export const schema = new GraphQLSchema({
         args: {
           dto: { type: new GraphQLNonNull(CreateProfileInput) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) => context.prisma.profile.create({
-          data: dto,
-        })
+        resolve: (_, { dto }: { dto }, context: GraphQLContext) =>
+          context.prisma.profile.create({
+            data: dto,
+          }),
       },
       changeProfile: {
         type: Profile,
@@ -192,12 +197,13 @@ export const schema = new GraphQLSchema({
           dto: { type: new GraphQLNonNull(ChangeProfileInput) },
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) => context.prisma.profile.update({
-          where: {
-            id: id,
-          },
-          data: dto,
-        })
+        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) =>
+          context.prisma.profile.update({
+            where: {
+              id: id,
+            },
+            data: dto,
+          }),
       },
       deleteProfile: {
         type: Profile,
