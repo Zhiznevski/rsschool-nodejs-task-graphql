@@ -126,9 +126,13 @@ export const schema = new GraphQLSchema({
         type: User,
         args: {
           dto: { type: new GraphQLNonNull(ChangeUserInput) },
+          id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) =>
-          context.prisma.user.create({
+        resolve: (_, { id, dto }: { id, dto }, context: GraphQLContext) =>
+          context.prisma.user.update({
+            where: {
+              id: id,
+            },
             data: dto,
           }),
       },

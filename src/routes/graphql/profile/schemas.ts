@@ -46,7 +46,6 @@ export const ChangeProfileInput = new GraphQLInputObjectType({
   fields: {
     isMale: { type: GraphQLBoolean },
     yearOfBirth: { type: GraphQLInt },
-    userId: { type: UUIDType },
     memberTypeId: { type: memberTypeIdEnum },
   },
 });
