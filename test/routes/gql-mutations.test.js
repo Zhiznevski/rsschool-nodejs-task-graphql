@@ -143,7 +143,6 @@ await test('gql-mutations', async (t) => {
         userDto: { name: changedName },
       },
     });
-    console.log(errors);
 
     const { body: foundChangedPost } = await getPost(app, data.changePost.id);
     const { body: foundChangedUser } = await getUser(app, data.changeUser.id);
