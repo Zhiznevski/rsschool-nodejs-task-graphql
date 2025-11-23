@@ -5,8 +5,10 @@ import {
   GraphQLString,
 } from 'graphql';
 import { UUIDType } from '../types/uuid.js';
+import { Post as PostType } from '@prisma/client';
+import { GraphQLContext } from '../rootSchema.js';
 
-export const Post = new GraphQLObjectType({
+export const Post = new GraphQLObjectType<PostType, GraphQLContext>({
   name: 'Post',
   description: 'The post contains id, discount and postsLimitPerMonth',
   fields: () => ({

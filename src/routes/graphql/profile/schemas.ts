@@ -10,7 +10,7 @@ import { MemberType, memberTypeIdEnum } from '../member-types/schemas.js';
 import { GraphQLContext } from '../rootSchema.js';
 import { Profile as ProfileType } from '@prisma/client';
 
-export const Profile = new GraphQLObjectType({
+export const Profile = new GraphQLObjectType<ProfileType, GraphQLContext> ({
   name: 'Profile',
   fields: () => ({
     id: {

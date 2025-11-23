@@ -86,7 +86,7 @@ export const schema = new GraphQLSchema({
         },
       },
       user: {
-        type: User,
+        type: User as GraphQLObjectType,
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
@@ -150,7 +150,7 @@ export const schema = new GraphQLSchema({
     name: 'Mutation',
     fields: {
       createUser: {
-        type: User,
+        type: User as GraphQLObjectType,
         args: {
           dto: { type: new GraphQLNonNull(CreateUserInput) },
         },
@@ -160,7 +160,7 @@ export const schema = new GraphQLSchema({
           }),
       },
       changeUser: {
-        type: User,
+        type: User as GraphQLObjectType,
         args: {
           dto: { type: new GraphQLNonNull(ChangeUserInput) },
           id: { type: new GraphQLNonNull(UUIDType) },
