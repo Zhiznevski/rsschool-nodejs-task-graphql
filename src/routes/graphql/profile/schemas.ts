@@ -8,6 +8,7 @@ import {
 import { UUIDType } from '../types/uuid.js';
 import { MemberType, memberTypeIdEnum } from '../member-types/schemas.js';
 import { GraphQLContext } from '../rootSchema.js';
+import { Profile as ProfileType } from '@prisma/client';
 
 export const Profile = new GraphQLObjectType({
   name: 'Profile',
@@ -23,7 +24,7 @@ export const Profile = new GraphQLObjectType({
     },
     memberType: {
       type: MemberType,
-      resolve: (parent, _, context: GraphQLContext) =>
+      resolve: (parent: ProfileType, _, context: GraphQLContext) =>
         context.memberTypesLoader.load(parent.memberTypeId),
     },
   }),

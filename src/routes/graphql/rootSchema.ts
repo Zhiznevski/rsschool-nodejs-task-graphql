@@ -42,10 +42,10 @@ export const schema = new GraphQLSchema({
         args: {
           id: { type: new GraphQLNonNull(memberTypeIdEnum) },
         },
-        resolve: async (_, { id }, context: GraphQLContext) => {
+        resolve: async (_, { id }: { id: string}, context: GraphQLContext) => {
           const memberType = await context.prisma.memberType.findUnique({
             where: {
-              id: id as string,
+              id: id,
             },
           });
           if (!memberType) {
@@ -90,10 +90,10 @@ export const schema = new GraphQLSchema({
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: async (_, { id }, context: GraphQLContext) => {
+        resolve: async (_, { id }: { id: string}, context: GraphQLContext) => {
           const user = await context.prisma.user.findUnique({
             where: {
-              id: id as string,
+              id: id,
             },
           });
           if (!user) {
@@ -111,10 +111,10 @@ export const schema = new GraphQLSchema({
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: async (_, { id }, context: GraphQLContext) => {
+        resolve: async (_, { id }: {id: string}, context: GraphQLContext) => {
           const post = await context.prisma.post.findUnique({
             where: {
-              id: id as string,
+              id: id,
             },
           });
           if (!post) {
@@ -132,10 +132,10 @@ export const schema = new GraphQLSchema({
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: async (_, { id }, context: GraphQLContext) => {
+        resolve: async (_, { id }: {id: string}, context: GraphQLContext) => {
           const profile = await context.prisma.profile.findUnique({
             where: {
-              id: id as string,
+              id: id,
             },
           });
           if (!profile) {
@@ -154,7 +154,7 @@ export const schema = new GraphQLSchema({
         args: {
           dto: { type: new GraphQLNonNull(CreateUserInput) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) =>
+        resolve: (_, { dto }: { dto: { name: string, balance: number} }, context: GraphQLContext) =>
           context.prisma.user.create({
             data: dto,
           }),
@@ -165,7 +165,7 @@ export const schema = new GraphQLSchema({
           dto: { type: new GraphQLNonNull(ChangeUserInput) },
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) =>
+        resolve: (_, { id, dto }: { id: string; dto: { name: string, balance: number} }, context: GraphQLContext) =>
           context.prisma.user.update({
             where: {
               id: id,
@@ -178,7 +178,7 @@ export const schema = new GraphQLSchema({
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: async (_, { id }: { id }, context: GraphQLContext) => {
+        resolve: async (_, { id }: { id: string }, context: GraphQLContext) => {
           await context.prisma.user.delete({
             where: {
               id: id,
@@ -234,7 +234,7 @@ export const schema = new GraphQLSchema({
         args: {
           dto: { type: new GraphQLNonNull(CreatePostInput) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) =>
+        resolve: (_, { dto }: { dto: { title: string, content: string, authorId: string}}, context: GraphQLContext) =>
           context.prisma.post.create({
             data: dto,
           }),
@@ -245,7 +245,7 @@ export const schema = new GraphQLSchema({
           dto: { type: new GraphQLNonNull(ChangePostInput) },
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) =>
+        resolve: (_, { id, dto }: { id: string; dto: { title: string, content: string }}, context: GraphQLContext) =>
           context.prisma.post.update({
             where: {
               id: id,
@@ -258,7 +258,7 @@ export const schema = new GraphQLSchema({
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: async (_, { id }: { id }, context: GraphQLContext) => {
+        resolve: async (_, { id }: { id: string }, context: GraphQLContext) => {
           await context.prisma.post.delete({
             where: {
               id: id,
@@ -272,7 +272,11 @@ export const schema = new GraphQLSchema({
         args: {
           dto: { type: new GraphQLNonNull(CreateProfileInput) },
         },
-        resolve: (_, { dto }: { dto }, context: GraphQLContext) =>
+        resolve: (_, { dto }: { dto:  { isMale: boolean,
+            yearOfBirth: number,
+            userId: string,
+            memberTypeId: string
+          }, }, context: GraphQLContext) =>
           context.prisma.profile.create({
             data: dto,
           }),
@@ -283,7 +287,10 @@ export const schema = new GraphQLSchema({
           dto: { type: new GraphQLNonNull(ChangeProfileInput) },
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: (_, { id, dto }: { id; dto }, context: GraphQLContext) =>
+        resolve: (_, { id, dto }: { id: string; dto: { isMale: boolean,
+            yearOfBirth: number,
+            memberTypeId: string
+          } }, context: GraphQLContext) =>
           context.prisma.profile.update({
             where: {
               id: id,
@@ -296,7 +303,7 @@ export const schema = new GraphQLSchema({
         args: {
           id: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: async (_, { id }: { id }, context: GraphQLContext) => {
+        resolve: async (_, { id }: { id: string }, context: GraphQLContext) => {
           await context.prisma.profile.delete({
             where: {
               id: id,
