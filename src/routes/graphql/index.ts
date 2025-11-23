@@ -1,6 +1,13 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { createGqlResponseSchema, gqlResponseSchema } from './schemas.js';
-import { GraphQLArgs, execute, parse, specifiedRules, validate } from 'graphql';
+import {
+  DocumentNode,
+  GraphQLArgs,
+  execute,
+  parse,
+  specifiedRules,
+  validate,
+} from 'graphql';
 import { schema } from './rootSchema.js';
 import depthLimit from 'graphql-depth-limit';
 import DataLoader from 'dataloader';
@@ -9,7 +16,7 @@ import { PrismaClient } from '@prisma/client';
 const allValidationRules = [...specifiedRules, depthLimit(5)];
 
 export function executeGraphQLRequest(args: GraphQLArgs) {
-  let document;
+  let document: DocumentNode;
   try {
     document = parse(args.source);
   } catch (syntaxError) {

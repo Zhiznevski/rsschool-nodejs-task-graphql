@@ -7,7 +7,6 @@ import {
 } from 'graphql';
 import { UUIDType } from '../types/uuid.js';
 import { MemberType, memberTypeIdEnum } from '../member-types/schemas.js';
-import { MemberTypeId } from '../../member-types/schemas.js';
 import { GraphQLContext } from '../rootSchema.js';
 
 export const Profile = new GraphQLObjectType({

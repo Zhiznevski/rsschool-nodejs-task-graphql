@@ -2,10 +2,7 @@ import {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLList,
-  GraphQLError,
   GraphQLNonNull,
-  GraphQLScalarType,
-  GraphQLBoolean,
   GraphQLString,
 } from 'graphql';
 import { MemberType, memberTypeIdEnum } from './member-types/schemas.js';
@@ -15,6 +12,11 @@ import { UUIDType } from './types/uuid.js';
 import { ChangeUserInput, CreateUserInput, User } from './users/schemas.js';
 import { ChangeProfileInput, CreateProfileInput, Profile } from './profile/schemas.js';
 import DataLoader from 'dataloader';
+import {
+  parseResolveInfo,
+  ResolveTree,
+  simplifyParsedResolveInfoFragmentWithType,
+} from 'graphql-parse-resolve-info';
 
 type DataLoaderType = InstanceType<typeof DataLoader>;
 
@@ -54,7 +56,34 @@ export const schema = new GraphQLSchema({
       },
       users: {
         type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
-        resolve: (_, __, context: GraphQLContext) => context.prisma.user.findMany(),
+        resolve: async (_, __, context, info) => {
+          const parsedResolveInfoFragment = parseResolveInfo(info);
+          const { fields } = simplifyParsedResolveInfoFragmentWithType(
+            parsedResolveInfoFragment as ResolveTree,
+            info.returnType,
+          );
+          const isIncludeUserSubscribedTo = 'userSubscribedTo' in fields;
+          const isIncludeSubscribedToUser = 'subscribedToUser' in fields;
+
+          const users = await context.prisma.user.findMany({
+            include: {
+              userSubscribedTo: isIncludeUserSubscribedTo,
+              subscribedToUser: isIncludeSubscribedToUser,
+            },
+          });
+
+          if (isIncludeUserSubscribedTo) {
+            for (const user of users) {
+              context.userSubscriptions.prime(user.id, []);
+            }
+          }
+          if (isIncludeSubscribedToUser) {
+            for (const user of users) {
+              context.userSubscribers.prime(user.id, []);
+            }
+          }
+          return users;
+        },
       },
       user: {
         type: User,
@@ -164,7 +193,11 @@ export const schema = new GraphQLSchema({
           userId: { type: new GraphQLNonNull(UUIDType) },
           authorId: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: async (_, { userId, authorId }: { userId; authorId }, context) => {
+        resolve: async (
+          _,
+          { userId, authorId }: { userId: string; authorId: string },
+          context,
+        ) => {
           await context.prisma.subscribersOnAuthors.create({
             data: {
               subscriberId: userId,
@@ -180,7 +213,11 @@ export const schema = new GraphQLSchema({
           userId: { type: new GraphQLNonNull(UUIDType) },
           authorId: { type: new GraphQLNonNull(UUIDType) },
         },
-        resolve: async (_, { userId, authorId }: { userId; authorId }, context) => {
+        resolve: async (
+          _,
+          { userId, authorId }: { userId: string; authorId: string },
+          context,
+        ) => {
           await context.prisma.subscribersOnAuthors.delete({
             where: {
               subscriberId_authorId: {
