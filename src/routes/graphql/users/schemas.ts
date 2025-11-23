@@ -14,7 +14,7 @@ import { User as UserType } from '@prisma/client';
 
 type UserParent = UserType;
 
-export const User = new GraphQLObjectType<UserParent,GraphQLContext>({
+export const User = new GraphQLObjectType<UserParent, GraphQLContext>({
   name: 'User',
   fields: () => ({
     id: {
@@ -28,23 +28,19 @@ export const User = new GraphQLObjectType<UserParent,GraphQLContext>({
     },
     profile: {
       type: Profile,
-      resolve: async (parent, _, context) =>
-        context.profileLoader.load(parent.id),
+      resolve: async (parent, _, context) => context.profileLoader.load(parent.id),
     },
     posts: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Post))),
-      resolve: async (parent, _, context) =>
-        context.postsLoader.load(parent.id),
+      resolve: async (parent, _, context) => context.postsLoader.load(parent.id),
     },
     userSubscribedTo: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
-      resolve: (parent, _, context) =>
-        context.userSubscriptions.load(parent.id),
+      resolve: (parent, _, context) => context.userSubscriptions.load(parent.id),
     },
     subscribedToUser: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(User))),
-      resolve: (parent, _, context) =>
-        context.userSubscribers.load(parent.id),
+      resolve: (parent, _, context) => context.userSubscribers.load(parent.id),
     },
   }),
 });

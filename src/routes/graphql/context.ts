@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import DataLoader from "dataloader";
+import { PrismaClient } from '@prisma/client';
+import DataLoader from 'dataloader';
 
 export function createContext(prisma: PrismaClient) {
   return {

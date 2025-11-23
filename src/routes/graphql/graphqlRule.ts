@@ -6,8 +6,8 @@ import {
   specifiedRules,
   validate,
 } from 'graphql';
-import depthLimit from "graphql-depth-limit";
-import { schema } from "./rootSchema.js";
+import depthLimit from 'graphql-depth-limit';
+import { schema } from './rootSchema.js';
 
 const allValidationRules = [...specifiedRules, depthLimit(5)];
 
